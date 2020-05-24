@@ -162,6 +162,7 @@ function report_submitView_hack() {
         let btn = document.createElement('button');
         btn.className = 'btn large';
         btn.innerHTML = '<i class="icon-list-color"></i>'+innerText;
+        btn.style.marginRight = '12px';
         for (let opt in options) {
             btn.setAttribute(opt, options[opt]);
         }
@@ -169,14 +170,16 @@ function report_submitView_hack() {
     }
 
     btn = doc.querySelector('button.btn.large');
-    btn.parentNode.insertBefore(createLargeButton(
-        '수 정 (제출일은 변경되지 않음)', {
-            onclick: `javascript:updateReportSubmit();`
-        }
-    ), btn);
+
     btn.parentNode.insertBefore(createLargeButton(
         '제출정보보기 (수강생 전원)', {
             onclick: `javascript:viewReportList('${doc.reportForm['reportInfoDTO.reportInfoId'].value}');`
+        }
+    ), btn);
+
+    btn.parentNode.insertBefore(createLargeButton(
+        '수 정 (제출일은 변경되지 않음)', {
+            onclick: `javascript:updateReportSubmit();`
         }
     ), btn);
 }
