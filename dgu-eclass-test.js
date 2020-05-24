@@ -47,7 +47,15 @@ function detectPageType() {
         },
         reportForm : form => {
             console.log('found reportForm');
-            reportPageUpdate();
+            
+            if (form.hasOwnProperty('reportSubmitDTO.submitStatus')) {
+                // 페이지: 학습 활동 / 과제 / 과제 제출 정보
+                report_submitView_hack();
+            }
+            else {
+                // 페이지: 학습 활동 / 과제 (목록)
+                report_viewList_hack();
+            }
         },
         courseForm : form => {
             console.log('found courseForm');
@@ -95,64 +103,78 @@ function __DEBUG__() {
 // 학습 활동 / 과제
 // ================================================
 
-function reportPageUpdate() {
+function report_viewList_hack() {
     let doc = getDocument();
     let elements;
 
-    elements = doc.querySelectorAll('div#listBox div.listContent dl.element');
+    // --------------------------------
 
     function parseReportElement(elem) {
-        let _title = () => {
-            return elem.querySelector('h4.f14').innerText.replace(/\s(?=\s)+/g, '');
-        };
-        let _btnBox = () => {
-            return elem.querySelector('ul.btnBox');
-        };
-        let _reportInfoId = () => {
-            let matched = elem.innerHTML.match(/'REPT_[^']+'/);
-            if (matched != null) {
-                return matched[0].replace(/'/g, "");
-            }
-            return null;
-        };
-
         return {
-            node: elem,
-
-            title: _title(),
-            btnBox: _btnBox(),
-            reportInfoId: _reportInfoId()
+            node:   elem,
+            title:  elem.querySelector('h4.f14').innerText.replace(/\s(?=\s)+/g, ''),
+            btnBox: elem.querySelector('ul.btnBox'),
+            reportInfoId: (() => {
+                let matched = elem.innerHTML.match(/'REPT_[^']+'/);
+                if (matched != null) {
+                    return matched[0].replace(/'/g, "");
+                }
+                return null;
+            })()
         };
     };
 
-    function createButton(innerText, options) {
-        let li = document.createElement('li');
+    function createSmallButton(innerText, options) {
         let a = document.createElement('a');
         a.className = 'btn small';
         a.innerHTML = '<i class="icon-note-small-color"></i>'+innerText;
         for (let opt in options) {
             a.setAttribute(opt, options[opt]);
         }
-
-        li.appendChild(a);
-        return li;
+        return a;
     }
 
-    
-    
+    // --------------------------------
+
+    elements = doc.querySelectorAll('div#listBox div.listContent dl.element');
+
     for (let elem of elements) {
         let parsed_elem = parseReportElement(elem);
 
         if (parsed_elem.reportInfoId) {
-            parsed_elem.btnBox.appendChild(createButton(
+            let li = document.createElement('li');
+            li.appendChild(createSmallButton(
                 '제출정보보기(수강생전원)', {
                     onclick: `javascript:viewReportList('${parsed_elem.reportInfoId}');`
                 }
             ));
+            parsed_elem.btnBox.appendChild(li);
         }
     }
+
 }
 
+function report_submitView_hack() {
+    let doc = getDocument();
+    let btn;
+
+    function createLargeButton(innerText, options) {
+        let btn = document.createElement('button');
+        btn.className = 'btn large';
+        btn.innerHTML = '<i class="icon-list-color"></i>'+innerText;
+        for (let opt in options) {
+            btn.setAttribute(opt, options[opt]);
+        }
+        return btn;
+    }
+
+    btn = doc.querySelector('button.btn.large');
+    btn.parentNode.insertBefore(createLargeButton(
+        '수 정 (제출일은 변경되지 않음)', {
+            onclick: `javascript:updateReportSubmit();`
+        }
+    ), btn);
+}
 // ================================================
 // 실행
 // ================================================
