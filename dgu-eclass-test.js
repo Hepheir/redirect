@@ -174,6 +174,11 @@ function report_submitView_hack() {
             onclick: `javascript:updateReportSubmit();`
         }
     ), btn);
+    btn.parentNode.insertBefore(createLargeButton(
+        '제출정보보기 (수강생 전원)', {
+            onclick: `javascript:viewReportList('${doc.reportForm['reportInfoDTO.reportInfoId'].value}');`
+        }
+    ), btn);
 }
 // ================================================
 // 실행
