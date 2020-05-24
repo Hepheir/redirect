@@ -145,7 +145,7 @@ function reportPageUpdate() {
 
         if (parsed_elem.reportInfoId) {
             parsed_elem.btnBox.appendChild(createButton(
-                '제출정보보기', {
+                '제출정보보기(수강생전원)', {
                     onclick: `javascript:viewReportList('${parsed_elem.reportInfoId}');`
                 }
             ));
