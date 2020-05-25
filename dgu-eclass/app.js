@@ -145,7 +145,7 @@ function report_viewList_hack() {
             let li = document.createElement('li');
             li.appendChild(createSmallButton(
                 '제출정보보기(수강생전원)', {
-                    onclick: `javascript:viewReportList('${parsed_elem.reportInfoId}');`
+                    onclick: `javascript:viewReportList('${parsed_elem.reportInfoId}', 'N');`
                 }
             ));
             parsed_elem.btnBox.appendChild(li);
@@ -157,12 +157,20 @@ function report_viewList_hack() {
 function report_submitView_hack() {
     let doc = getDocument();
     let btn;
+    let reportSubmitId;
 
     function createLargeButton(innerText, options) {
+        let iconType = 'icon-list-color'; // Default icon
+        if (options.hasOwnProperty('icon')) {
+            iconType = options['icon'];
+        }
+
         let btn = document.createElement('button');
+
         btn.className = 'btn large';
-        btn.innerHTML = '<i class="icon-list-color"></i>'+innerText;
+        btn.innerHTML = `<i class="${iconType}"></i>${innerText}`;
         btn.style.marginRight = '12px';
+        
         for (let opt in options) {
             btn.setAttribute(opt, options[opt]);
         }
@@ -170,11 +178,22 @@ function report_submitView_hack() {
     }
 
     btn = doc.querySelector('button.btn.large');
+    reportSubmitId = doc.reportForm['reportSubmitDTO.reportSubmitId'];
+    
     btn.parentNode.insertBefore(createLargeButton(
         '수 정 (불안정)', {
-            onclick: `javascript:updateReportSubmit();`
+            onclick: `javascript:updateReportSubmit();`,
+            icon: 'icon-modify-color'
         }
     ), btn);
+    btn.parentNode.insertBefore(createLargeButton(
+        '새로고침', {
+            onclick: `javascript:submitReportView('${reportSubmitId}');`,
+            icon: 'icon-list-color'
+        }
+    ), btn);
+
+    
 }
 
 // ================================================
