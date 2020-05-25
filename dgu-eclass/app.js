@@ -83,21 +83,6 @@ function detectPageType() {
     }
 }
 
-function __DEBUG__() {
-    let doc = getDocument();
-
-    function parseForm(form) {
-        let inputs = form.querySelectorAll('input');
-        let obj = {};
-        for (let i of inputs) {
-            obj[i.name] = i.value || undefined;
-        }
-        return obj;
-    }
-    console.log(parseForm(doc.courseForm || doc.reportForm));
-}
-
-
 
 // ================================================
 // 학습 활동 / 과제
@@ -170,7 +155,7 @@ function report_submitView_hack() {
         btn.className = 'btn large';
         btn.innerHTML = `<i class="${iconType}"></i>${innerText}`;
         btn.style.marginRight = '12px';
-        
+
         for (let opt in options) {
             btn.setAttribute(opt, options[opt]);
         }
@@ -186,14 +171,6 @@ function report_submitView_hack() {
             icon: 'icon-modify-color'
         }
     ), btn);
-    btn.parentNode.insertBefore(createLargeButton(
-        '새로고침', {
-            onclick: `javascript:submitReportView('${reportSubmitId}');`,
-            icon: 'icon-list-color'
-        }
-    ), btn);
-
-    
 }
 
 // ================================================
@@ -205,4 +182,3 @@ function report_submitView_hack() {
 // ================================================
 
 initialize();
-// renewDocument();
