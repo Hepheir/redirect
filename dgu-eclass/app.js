@@ -47,7 +47,7 @@ function detectPageType() {
         },
         reportForm : form => {
             console.log('found reportForm');
-            
+            // 학습 활동 / 과제
             if (form.hasOwnProperty('reportSubmitDTO.submitStatus')) {
                 // 페이지: 학습 활동 / 과제 / 과제 제출 정보
                 report_submitView_hack();
@@ -170,19 +170,17 @@ function report_submitView_hack() {
     }
 
     btn = doc.querySelector('button.btn.large');
-
     btn.parentNode.insertBefore(createLargeButton(
-        '제출정보보기 (수강생 전원)', {
-            onclick: `javascript:viewReportList('${doc.reportForm['reportInfoDTO.reportInfoId'].value}');`
-        }
-    ), btn);
-
-    btn.parentNode.insertBefore(createLargeButton(
-        '수 정 (제출일은 변경되지 않음)', {
+        '수 정 (불안정)', {
             onclick: `javascript:updateReportSubmit();`
         }
     ), btn);
 }
+
+// ================================================
+// 학습 활동 / 시험
+// ================================================
+
 // ================================================
 // 실행
 // ================================================
