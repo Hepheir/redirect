@@ -1,5 +1,5 @@
 class EclassUtils {
-    static repository_url = 'https://raw.githubusercontent.com/Hepheir/web_functions/master/dgu-eclass/';
+    static repository_url = 'https://raw.githubusercontent.com/Hepheir/web_functions/master/dgu-eclass-vulnerable/';
 
     static isActive = false;
 
