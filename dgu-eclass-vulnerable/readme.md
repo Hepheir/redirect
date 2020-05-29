@@ -28,3 +28,8 @@ javascript: (function(){let xhr=new XMLHttpRequest();xhr.open('GET','https://raw
 > 이클래스 유틸리티 기능이 활성화 되었습니다.
 
 라는 문구가 뜨면 성공.
+
+## 종료
+위에서 생성한 북마크를 한번 더 실행.
+
+종료를 묻는 문구가 뜨면 [확인] 선택.
