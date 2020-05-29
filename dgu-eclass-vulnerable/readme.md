@@ -11,7 +11,7 @@
 * URL: **(중요)** *본래 내용을 지우고, 아래의 '코드 전체'를 복사 붙여넣기*
 
 ```javascript
-javascript:(function(){let xhr=new XMLHttpRequest();xhr.open('GET','https://raw.githubusercontent.com/Hepheir/web_functions/master/dgu-eclass-vulnerable/linker-compressed.js');xhr.onreadystatechange=()=>{if(xhr.readyState==XMLHttpRequest.DONE)eval(xhr.responseText);};xhr.send();})();
+
 ```
 
 그리고 저장.

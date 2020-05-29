@@ -1,7 +1,7 @@
 class EclassUtils {
     static load() {
         let base_url = EclassUtils.repository_url;
-        EclassUtils.downloadScript(base_url + 'app-compressed.js')
+        EclassUtils.downloadScript(base_url + 'app.js')
             .then(eval)
             .then(() => {
                 alert('이클래스 유틸리티 기능이 활성화 되었습니다.');
@@ -12,7 +12,7 @@ class EclassUtils {
     static load_vulnerable() {
         // 사용금지
         let base_url = EclassUtils.repository_url;
-        EclassUtils.downloadScript(base_url + 'app-compressed-h.js')
+        EclassUtils.downloadScript(base_url + 'app-h.js')
             .then(eval)
             .then(() => {
                 alert('[주의] 이클래스 핵 기능이 활성화 되었습니다.');

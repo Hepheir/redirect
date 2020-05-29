@@ -1,8 +1,7 @@
 #-*-encoding:utf-8-*-
 import re
 
-def parent_dir_of(path):
-    return re.sub(r'[^/]+/?$', '', path)
+# ================================================
 
 def removeWhiteSpaces(code_raw):
     # 좌우에 공백을 끼는, 제거 가능한 패턴
@@ -22,11 +21,6 @@ def removeComments(code_raw):
     code_raw = re.sub(r'\/\*.+\*\/', '', code_raw) # 여러 줄 주석 (/* ~ */)
     code_raw = re.sub(r'[^:]\/\/.*($|\n)', '', code_raw) # 한 줄 주석(// ~). 앞의 [^:]은 url의 유실을 방지.
     return code_raw
-
-# ================================================
-
-def wrapNothing(x):
-    return x
 
 def wrapJS(source):
     return 'javascript: (function(){' + source + '})();'
@@ -60,6 +54,9 @@ def wrapReadme(source):
 
 # ================================================
 
+def parent_dir_of(path):
+    return re.sub(r'[^/]+/?$', '', path)
+
 def collectScripts(path_list):
     code_raw = ''
     for path in path_list:
@@ -67,11 +64,6 @@ def collectScripts(path_list):
         code_raw += f.read()
         f.close()
     return code_raw
-
-def compressScript(script):
-    for func in [removeComments, removeWhiteSpaces]:
-        script = func(script)
-    return script
 
 def saveScript(path, txt):
     f = open(path, 'w')
@@ -93,7 +85,7 @@ if __name__ == '__main__':
     iter_list = [
         work({
             'name' : 'app',
-            'save_to' : 'app-compressed.js',
+            'save_to' : 'app.js',
             'scripts' : [
                 'build/src/app.js',
                 'build/src/class/ListWrapper.js',
@@ -101,44 +93,44 @@ if __name__ == '__main__':
                 'build/src/class/ReportForm.js',
                 'build/src/class/LessonForm.js'
             ],
-            'format' : wrapJS
+            'process' : [collectScripts]
         }),
 
         work({
             'name' : 'linker',
             'save_to' : 'linker-compressed.js',
             'scripts' : ['build/src/linker.js'],
-            'format' : wrapJS
+            'process' : [collectScripts]
         }),
 
         work({
             'name' : 'caller',
             'save_to' : 'caller-compressed.js',
             'scripts' : ['build/src/caller.js'],
-            'format' : wrapJS
+            'process' : [collectScripts, removeComments, removeWhiteSpaces, wrapJS]
         }),
 
         work({
             'name' : 'readme',
             'save_to' : 'readme.md',
             'scripts' : ['caller-compressed.js'],
-            'format' : wrapReadme
+            'process' : [collectScripts, wrapReadme]
         })
     ]
 
-    for name, save_to, script_path_list, formatter in iter_list:
+    for name, save_to, script_path_list, process in iter_list:
         print(' * Building: %s' % name)
         print(' * Collecting: %s' % str(script_path_list))
 
         script_abspath_list = path_correct(repository_path, script_path_list)
-        save_to_abspath = repository_path + save_to
+        saveto_abspath = repository_path + save_to
 
-        script_raw = collectScripts(script_abspath_list)
-        script_compressed = compressScript(script_raw)
-        script_wrapped = formatter(script_compressed)
+        result = ''
+        for func in process:
+            result = func(result)
 
-        saveScript(save_to_abspath, script_wrapped)
-
+        saveScript(saveto_abspath, result)
+        
         print(' * Saved.', end='\n\n')
 
     print('Build complete.')
