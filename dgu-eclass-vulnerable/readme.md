@@ -11,7 +11,7 @@
 * URL: **(중요)** *본래 내용을 지우고, 아래의 '코드 전체'를 복사 붙여넣기*
 
 ```javascript
-javascript:(function(){class EclassUtils{static repository_url='https://raw.githubusercontent.com/Hepheir/web_functions/master/dgu-eclass-vulnerable/';static isActive=false;static load(){downloadScript(repository_url+'app-compressed.js').then(eval).then(()=>{alert('이클래스 유틸리티 기능이 활성화 되었습니다.');EclassUtils.isActive=true;});}static load_vulnerable(){downloadScript(repository_url+'app-compressed-h.js').then(eval).then(()=>{alert('[주의]이클래스 핵 기능이 활성화 되었습니다.');EclassUtils.isActive=true;});}static unload(){if(confirm('종료하시겠습니까?\n(확인을 누르시면 창이 새로고침 됩니다.)')){EclassUtils.isActive=false;location.reload();}}static downloadScript(url){return new Promise((resolve,reject)=>{let xhr=new XMLHttpRequest();xhr.open('GET',url);xhr.onreadystatechange=()=>{if(xhr.readyState==XMLHttpRequest.DONE)resolve(xhr.responseText);};xhr.send();});}}if(EclassUtils.isActive)EclassUtils.unload();else{unlock=unlock||false;if(!unlock)EclassUtils.load();else EclassUtils.load_vulnerable();}})();
+javascript:(function(){let xhr=new XMLHttpRequest();xhr.open('GET','https://raw.githubusercontent.com/Hepheir/web_functions/master/dgu-eclass-vulnerable/linker-compressed.js');xhr.onreadystatechange=()=>{if(xhr.readyState==XMLHttpRequest.DONE)eval(xhr.responseText);};xhr.send();})();
 ```
 
 그리고 저장.

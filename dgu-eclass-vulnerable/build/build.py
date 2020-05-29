@@ -92,14 +92,7 @@ if __name__ == '__main__':
  
     iter_list = [
         work({
-            'name' : 'caller',
-            'save_to' : 'caller-compressed.js',
-            'scripts' : ['build/src/caller.js'],
-            'format' : wrapJS
-        }),
-        
-        work({
-            'name' : 'app-compressed',
+            'name' : 'app',
             'save_to' : 'app-compressed.js',
             'scripts' : [
                 'build/src/app.js',
@@ -108,6 +101,20 @@ if __name__ == '__main__':
                 'build/src/class/ReportForm.js',
                 'build/src/class/LessonForm.js'
             ],
+            'format' : wrapJS
+        }),
+
+        work({
+            'name' : 'linker',
+            'save_to' : 'linker-compressed.js',
+            'scripts' : ['build/src/linker.js'],
+            'format' : wrapJS
+        }),
+
+        work({
+            'name' : 'caller',
+            'save_to' : 'caller-compressed.js',
+            'scripts' : ['build/src/caller.js'],
             'format' : wrapJS
         }),
 
