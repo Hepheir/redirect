@@ -1,13 +1,11 @@
 try {
-    if (document.EclassUtils.isActive)
-        document.EclassUtils.unload();
-    else
-        document.EclassUtils.load();
-} catch {
+    if (!document.EclassUtils.repository_url) throw '';
+}
+catch (err) {
     document.EclassUtils = class {
         static load() {
             let base_url = document.EclassUtils.repository_url;
-            document.EclassUtils.downloadScript(base_url + 'app.js')
+            document.EclassUtils.downloadScript(base_url + 'app-release.js')
                 .then(eval)
                 .then(() => {
                     alert('이클래스 유틸리티 기능이 활성화 되었습니다.');
@@ -18,7 +16,7 @@ try {
         static load_vulnerable() {
             // 사용금지
             let base_url = document.EclassUtils.repository_url;
-            document.EclassUtils.downloadScript(base_url + 'app-h.js')
+            document.EclassUtils.downloadScript(base_url + 'app-dev.js')
                 .then(eval)
                 .then(() => {
                     alert('[주의] 이클래스 핵 기능이 활성화 되었습니다.');
@@ -47,5 +45,15 @@ try {
         }
     };
     document.EclassUtils.repository_url = 'https://raw.githubusercontent.com/Hepheir/web_functions/master/dgu-eclass-vulnerable/';
-    document.EclassUtils.load();
+}
+finally {
+    if (document.EclassUtils.isActive) {
+        document.EclassUtils.unload();
+    }
+    else {
+        if (document.hasOwnProperty('hack'))
+            document.EclassUtils.load_vulnerable();
+        else
+            document.EclassUtils.load();
+    }
 }

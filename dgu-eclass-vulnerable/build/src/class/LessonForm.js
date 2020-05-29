@@ -13,28 +13,36 @@ class LessonForm extends Form {
 
             elements = ListWrapper.getElements(LessonForm.document);
             elements.forEach(elem => {
-                isFound = elem.getIdsByFlag(['lessonElementId', 'lessonContentsId'], 'LESN');
-
-                if (isFound) elem.appendButton(
-                    '제출정보보기(수강생전원)', {
-                        onclick: `javascript:viewReportList('${elem.reportInfoId}', 'N');`
-                    }
-                );
+                if (!elem.getIdsByFlag(['lessonElementId', 'lessonContentsId'], 'LESN')) return;
+                
+                LessonForm.viewList.updateTable(elem);
             });
             console.log('[@LessonForm.viewList] * Found elements are:', elements);
         }
 
-        static updateTable(elements) {
-            elements.forEach(elem => {
-                if (elem.reportInfoId === null)
-                    return;
+        static updateTable(elem) {
+            let thead_tr, tbody_trs;
+            let table = elem.node.querySelector('table');
 
-                elem.appendButton(
-                    '제출정보보기(수강생전원)', {
-                        onclick: `javascript:viewReportList('${elem.reportInfoId}', 'N');`
-                    }
-                );
-            });
+            thead_tr  = table.querySelector('thead tr');
+            tbody_trs = table.querySelectorAll('tbody tr');
+
+            LessonForm.viewList.addTableCell(thead_tr, isHead=true);
+            for (let tr in tbody_trs)
+                LessonForm.viewList.addTableCell(tr);
         }
+
+        static addTableCell(tr, isHead=false) {
+            let checkBox = document.createElement('input');
+            checkBox.type = 'checkbox';
+
+            let td = document.createElement(isHead ? 'th' : 'td');
+            td.className = 'last';
+
+            td.appendChild(checkBox);
+            tr.appendChild(td);
+        }
+
+
     };
 }

@@ -92,11 +92,15 @@ def wrapReadme(source):
 if __name__ == '__main__':
     repository_path = parent_dir_of(parent_dir_of(__file__))
     print("Selected Repository: '%s'" % (repository_path))
- 
-    iter_list = [
-        work({
+
+    # --------------------------------
+    app_work = None
+
+    inDevelop = True
+    if inDevelop:
+        app_work = work({
             'name' : 'app',
-            'save_to' : 'app.js',
+            'save_to' : 'app-dev.js',
             'scripts' : [
                 'build/src/class/ListWrapper.js',
                 'build/src/class/Form.js',
@@ -105,8 +109,25 @@ if __name__ == '__main__':
                 'build/src/app.js'
             ],
             'process' : [collectScripts]
-        }),
+        })
+    else:
+        app_work = work({
+            'name' : 'app',
+            'save_to' : 'app-release.js',
+            'scripts' : [
+                'build/src/class/ListWrapper.js',
+                'build/src/class/Form.js',
+                'build/src/class/ReportForm.js',
+                'build/src/class/LessonForm.js',
+                'build/src/app.js'
+            ],
+            'process' : [collectScripts, removeComments, removeWhiteSpaces]
+        })
+    # --------------------------------
 
+    iter_list = [
+        app_work,
+        
         work({
             'name' : 'linker',
             'save_to' : 'linker-compressed.js',
