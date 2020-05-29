@@ -19,7 +19,7 @@ catch (err) {
             document.EclassUtils.downloadScript(base_url + 'app-dev.js')
                 .then(eval)
                 .then(() => {
-                    alert('[주의] 이클래스 핵 기능이 활성화 되었습니다.');
+                    alert('[주의] 이클래스 유틸리티 개발자 모드 ON.');
                     document.EclassUtils.isActive = true;
                 });
         }
