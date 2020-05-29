@@ -147,7 +147,7 @@ class LessonForm extends Form {
             thead_tr  = table.querySelector('thead tr');
             tbody_trs = table.querySelectorAll('tbody tr');
 
-            LessonForm.viewList.addTableCell(thead_tr, isHead=true);
+            LessonForm.viewList.addTableCell(thead_tr, true);
             for (let tr in tbody_trs)
                 LessonForm.viewList.addTableCell(tr);
         }
@@ -156,7 +156,13 @@ class LessonForm extends Form {
             let checkBox = document.createElement('input');
             checkBox.type = 'checkbox';
 
-            let td = document.createElement(isHead ? 'th' : 'td');
+            let td;
+            if (isHead) {
+                td = document.createElement('th');
+                td.innerText = '자동수강';
+            } else {
+                td = document.createElement('td');
+            }
             td.className = 'last';
 
             td.appendChild(checkBox);
