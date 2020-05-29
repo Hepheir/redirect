@@ -3,6 +3,30 @@ import re
 
 # ================================================
 
+def parent_dir_of(path):
+    return re.sub(r'[^/]+/?$', '', path)
+
+def saveScript(path, txt):
+    f = open(path, 'w')
+    f.write(txt)
+    f.close()
+
+def path_correct(dir_path, file_path_list):
+    return [dir_path + file_path for file_path in file_path_list]
+
+def work(_dict): # 그저 가독성 용.
+    return [_dict[key] for key in _dict]
+
+def collectScripts(path_list):
+    code_raw = ''
+    for path in path_list:
+        f = open(path, 'r')
+        code_raw += f.read()
+        f.close()
+    return code_raw
+
+# ================================================
+
 def removeWhiteSpaces(code_raw):
     # 좌우에 공백을 끼는, 제거 가능한 패턴
     REGEXP_META_CHAR = ".+*{}[]()?|"
@@ -23,7 +47,7 @@ def removeComments(code_raw):
     return code_raw
 
 def wrapJS(source):
-    return 'javascript: (function(){' + source + '})();'
+    return 'javascript: (function(){%s})();' % source
 
 def wrapReadme(source):
     return """
@@ -54,30 +78,6 @@ def wrapReadme(source):
 
 # ================================================
 
-def parent_dir_of(path):
-    return re.sub(r'[^/]+/?$', '', path)
-
-def collectScripts(path_list):
-    code_raw = ''
-    for path in path_list:
-        f = open(path, 'r')
-        code_raw += f.read()
-        f.close()
-    return code_raw
-
-def saveScript(path, txt):
-    f = open(path, 'w')
-    f.write(txt)
-    f.close()
-
-def path_correct(dir_path, file_path_list):
-    return [dir_path + file_path for file_path in file_path_list]
-
-def work(_dict): # 그저 가독성 용.
-    return [_dict[key] for key in _dict]
-
-# ================================================
-
 if __name__ == '__main__':
     repository_path = parent_dir_of(parent_dir_of(__file__))
     print("Selected Repository: '%s'" % (repository_path))
@@ -87,11 +87,11 @@ if __name__ == '__main__':
             'name' : 'app',
             'save_to' : 'app.js',
             'scripts' : [
-                'build/src/app.js',
                 'build/src/class/ListWrapper.js',
                 'build/src/class/Form.js',
                 'build/src/class/ReportForm.js',
-                'build/src/class/LessonForm.js'
+                'build/src/class/LessonForm.js',
+                'build/src/app.js'
             ],
             'process' : [collectScripts]
         }),
@@ -100,21 +100,14 @@ if __name__ == '__main__':
             'name' : 'linker',
             'save_to' : 'linker-compressed.js',
             'scripts' : ['build/src/linker.js'],
-            'process' : [collectScripts]
-        }),
-
-        work({
-            'name' : 'caller',
-            'save_to' : 'caller-compressed.js',
-            'scripts' : ['build/src/caller.js'],
-            'process' : [collectScripts, removeComments, removeWhiteSpaces, wrapJS]
+            'process' : [collectScripts, removeComments, removeWhiteSpaces]
         }),
 
         work({
             'name' : 'readme',
             'save_to' : 'readme.md',
-            'scripts' : ['caller-compressed.js'],
-            'process' : [collectScripts, wrapReadme]
+            'scripts' : ['build/src/caller.js'],
+            'process' : [collectScripts, removeComments, removeWhiteSpaces, wrapJS, wrapReadme]
         })
     ]
 
@@ -124,13 +117,15 @@ if __name__ == '__main__':
 
         script_abspath_list = path_correct(repository_path, script_path_list)
         saveto_abspath = repository_path + save_to
+        
+        result = script_abspath_list
 
-        result = ''
+        print(' * Process:')
         for func in process:
+            print('   * %s' % str(func))
             result = func(result)
 
         saveScript(saveto_abspath, result)
-        
-        print(' * Saved.', end='\n\n')
+        print(" * Saved at '%s'" % saveto_abspath, end='\n\n')
 
     print('Build complete.')
