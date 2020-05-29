@@ -69,7 +69,7 @@ class Main {
     }
 
     detectPageType() {
-        console.log('[@Main] Detect page types:')
+        console.log('[@Main] Detect page types:');
         let formName, form;
 
         for (formName in this.formTypes) {

@@ -1,10 +1,7 @@
 class EclassUtils {
-    static repository_url = 'https://raw.githubusercontent.com/Hepheir/web_functions/master/dgu-eclass-vulnerable/';
-
-    static isActive = false;
-
     static load() {
-        downloadScript(repository_url + 'app-compressed.js')
+        let base_url = EclassUtils.repository_url;
+        EclassUtils.downloadScript(base_url + 'app-compressed.js')
             .then(eval)
             .then(() => {
                 alert('이클래스 유틸리티 기능이 활성화 되었습니다.');
@@ -14,7 +11,8 @@ class EclassUtils {
 
     static load_vulnerable() {
         // 사용금지
-        downloadScript(repository_url + 'app-compressed-h.js')
+        let base_url = EclassUtils.repository_url;
+        EclassUtils.downloadScript(base_url + 'app-compressed-h.js')
             .then(eval)
             .then(() => {
                 alert('[주의] 이클래스 핵 기능이 활성화 되었습니다.');
@@ -30,18 +28,21 @@ class EclassUtils {
     }
 
     static downloadScript(url) {
-        return new Promise((resolve, reject) => {
-            let xhr = new XMLHttpRequest();
-        
+        let xhr = new XMLHttpRequest();
+        return new Promise((resolve, reject) => {        
             xhr.open('GET', url);
             xhr.onreadystatechange = () => {
-                if (xhr.readyState == XMLHttpRequest.DONE)
+                if (xhr.readyState == XMLHttpRequest.DONE) {
                     resolve(xhr.responseText);
+                }
             };
             xhr.send();
         });
     }
 }
+
+EclassUtils.repository_url = 'https://raw.githubusercontent.com/Hepheir/web_functions/master/dgu-eclass-vulnerable/';
+EclassUtils.isActive = false;
 
 if (EclassUtils.isActive) EclassUtils.unload();
 else {
