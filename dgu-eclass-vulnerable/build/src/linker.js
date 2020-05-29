@@ -45,7 +45,11 @@ class EclassUtils {
 
 if (EclassUtils.isActive) EclassUtils.unload();
 else {
-    unlock = unlock || false;
+    try {
+        if(unlock);
+    } catch (error) {
+        unlock = false;
+    }
 
     if (!unlock) EclassUtils.load();
     else EclassUtils.load_vulnerable();
