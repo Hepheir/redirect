@@ -1,19 +1,9 @@
-function checkRunnability() {
-    try {
-        if (EclassUtils);
-        return true;
-    } catch {
-        return false;
-    }
-}
-
-if (checkRunnability()) {
+try {
     if (EclassUtils.isActive)
         EclassUtils.unload();
     else
         EclassUtils.load();
-}
-else {
+} catch {
     var EclassUtils = class {
         static load() {
             let base_url = EclassUtils.repository_url;
@@ -24,7 +14,7 @@ else {
                     EclassUtils.isActive = true;
                 });
         }
-    
+
         static load_vulnerable() {
             // 사용금지
             let base_url = EclassUtils.repository_url;
@@ -35,14 +25,14 @@ else {
                     EclassUtils.isActive = true;
                 });
         }
-    
+
         static unload() {
             if (confirm('종료하시겠습니까?\n(확인을 누르시면 창이 새로고침 됩니다.)')) {
                 EclassUtils.isActive = false;
                 location.reload();
             }
         }
-    
+
         static downloadScript(url) {
             let xhr = new XMLHttpRequest();
             return new Promise((resolve, reject) => {        
@@ -55,6 +45,7 @@ else {
                 xhr.send();
             });
         }
-    }
+    };
     EclassUtils.repository_url = 'https://raw.githubusercontent.com/Hepheir/web_functions/master/dgu-eclass-vulnerable/';
+    EclassUtils.load();
 }
