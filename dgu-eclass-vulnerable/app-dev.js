@@ -50,7 +50,8 @@ class ListWrapper {
             this.buttonBox.appendChild(li);
         }
     }
-}class Form {
+}
+class Form {
     static name = '?';
 
     static load(formClass, form, main) {
@@ -86,7 +87,8 @@ class ListWrapper {
         console.log(err);
         throw err;
     }
-}class ReportForm extends Form {
+}
+class ReportForm extends Form {
     static name = 'ReportForm';
     
     static fetch() {
@@ -115,7 +117,8 @@ class ListWrapper {
             console.log('[@ReportForm.viewList] * Found elements are:', elements);
         }
     };
-}class LessonForm extends Form {
+}
+class LessonForm extends Form {
     static name = 'LessonForm';
 
     static fetch() {
@@ -162,7 +165,8 @@ class ListWrapper {
 
 
     };
-}class Main {
+}
+class Main {
     constructor() {
         this.frame = undefined;
         this.document = undefined;

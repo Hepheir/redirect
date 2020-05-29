@@ -18,12 +18,12 @@ def work(_dict): # 그저 가독성 용.
     return [_dict[key] for key in _dict]
 
 def collectScripts(path_list):
-    code_raw = ''
-    for path in path_list:
+    def _read(path):
         f = open(path, 'r')
-        code_raw += f.read()
+        code_raw = f.read()
         f.close()
-    return code_raw
+        return code_raw
+    return "\n".join([_read(p) for p in path_list])
 
 # ================================================
 
