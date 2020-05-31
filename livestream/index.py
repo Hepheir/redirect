@@ -1,6 +1,7 @@
 import cv2
 
 cap = cv2.VideoCapture(0)
+key = cv2.waitKey(500)
 
 while True:
     ret, frame = cap.read()
