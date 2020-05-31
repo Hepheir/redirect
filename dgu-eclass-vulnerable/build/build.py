@@ -1,31 +1,41 @@
 #-*-encoding:utf-8-*-
 import re
+import os
 
 inDevelop = True
 
 # ================================================
-
-def parent_dir_of(path):
-    return re.sub(r'[^/]+/?$', '', path)
 
 def saveScript(path, txt):
     f = open(path, 'w')
     f.write(txt)
     f.close()
 
-def path_correct(dir_path, file_path_list):
-    return [dir_path + file_path for file_path in file_path_list]
-
 def work(_dict): # 그저 가독성 용.
     return [_dict[key] for key in _dict]
 
 def collectScripts(path_list):
     def _read(path):
-        f = open(path, 'r')
-        code_raw = f.read()
-        f.close()
-        return code_raw
-    return "\n".join([_read(p) for p in path_list])
+        if not os.path.isfile(path):
+            print(f' * Error : {path} is not file.')
+            return ''
+        else:
+            f = open(path, 'r')
+            code_raw = f.read()
+            f.close()
+            return code_raw
+    def _readAllFromDir(path):
+        dirname = os.path.dirname(path)
+        files = os.listdir(dirname)
+        print(f"     * From '{dirname}'")
+        def _(f):
+            print(f"       * Collecting '{f}'")
+            path = os.path.sep.join([dirname, f])
+            return _read(path) if os.path.isfile(path) else ''
+        return '\n'.join([_(f) for f in files])
+    def _checkAsterisk(path):
+        return _readAllFromDir(path) if path.endswith('/*') else _read(path)
+    return "\n".join([_checkAsterisk(p) for p in path_list])
 
 # ================================================
 
@@ -35,10 +45,10 @@ def removeWhiteSpaces(code_raw):
     OTHERS           = ",-=:;<>"
 
     for token in REGEXP_META_CHAR:
-        code_raw = re.sub('[\s]*\\%s[\s]*'%(token), token, code_raw)
+        code_raw = re.sub(f'[\s]*\\{token}[\s]*', token, code_raw)
         
     for token in OTHERS:
-        code_raw = re.sub('[\s]*%s[\s]*'%(token), token, code_raw)
+        code_raw = re.sub(f'[\s]*{token}[\s]*', token, code_raw)
         
     code_raw = re.sub(r'[\s]+', ' ', code_raw) # 공백
     return code_raw
@@ -49,10 +59,10 @@ def removeComments(code_raw):
     return code_raw
 
 def wrapJS(source):
-    return 'javascript: (function(){%s})();' % source
+    return f'javascript: (function(){{{source}}})();'
 
 def wrapReadme(source):
-    return """
+    return f"""
 # 악용하지 마시오
 
 ## 개요
@@ -71,7 +81,7 @@ def wrapReadme(source):
 * URL: **(중요)** *본래 내용을 지우고, 아래의 '코드 전체'를 복사 붙여넣기*
 
 ```javascript
-%s
+{source}
 ```
 
 그리고 저장.
@@ -87,13 +97,13 @@ def wrapReadme(source):
 위에서 생성한 북마크를 한번 더 실행.
 
 종료를 묻는 문구가 뜨면 [확인] 선택.
-""" % source
+"""
 
 # ================================================
 
 if __name__ == '__main__':
-    repository_path = parent_dir_of(parent_dir_of(__file__))
-    print("Selected Repository: '%s'" % (repository_path))
+    repository_path = os.path.sep.join(__file__.split(os.path.sep)[:-2])
+    print(f"Selected Repository: '{repository_path}'")
 
     # --------------------------------
     app_work = None
@@ -103,10 +113,7 @@ if __name__ == '__main__':
             'name' : 'app',
             'save_to' : 'app-dev.js',
             'scripts' : [
-                'build/src/class/ListWrapper.js',
-                'build/src/class/Form.js',
-                'build/src/class/ReportForm.js',
-                'build/src/class/LessonForm.js',
+                'build/src/class/*',
                 'build/src/app.js'
             ],
             'process' : [collectScripts]
@@ -145,20 +152,20 @@ if __name__ == '__main__':
     ]
 
     for name, save_to, script_path_list, process in iter_list:
-        print(' * Building: %s' % name)
-        print(' * Collecting: %s' % str(script_path_list))
+        print(f' * Building: {name}')
+        print(f' * Collecting: {str(script_path_list)}')
 
-        script_abspath_list = path_correct(repository_path, script_path_list)
-        saveto_abspath = repository_path + save_to
+        script_abspath_list = [os.path.sep.join([repository_path, f]) for f in script_path_list]
+        saveto_abspath = os.path.sep.join([repository_path, save_to])
         
         result = script_abspath_list
 
         print(' * Process:')
         for func in process:
-            print('   * %s' % str(func))
+            print(f'   * {str(func)}')
             result = func(result)
 
         saveScript(saveto_abspath, result)
-        print(" * Saved at '%s'" % saveto_abspath, end='\n\n')
+        print(f" * Saved at '{saveto_abspath}'", end='\n\n')
 
     print('Build complete.')
