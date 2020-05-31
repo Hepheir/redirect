@@ -19,20 +19,35 @@ class ListWrapper {
 
         // id_name은 속성명, id_flag는 ID가 가진 패턴에서 앞부분 글자
         // (ex. 속성명: reportInfoId, ID패턴: REPT_20129aadk3...)
-        getIdsByFlag(id_name, id_flag) {
+        static _getIdsByFlag(node, id_name, id_flag) {
             let reg = new RegExp(`'${id_flag}_[^']+'`, 'g');
             let matched, matched_found;
     
             if ( !(id_name instanceof Array) )
                 id_name = new Array(id_name);
 
-            matched = this.node.innerHTML.match(reg);
+            matched = node.innerHTML.match(reg);
             matched_found = (matched != null);
 
-            for (let i = 0; i < id_name.length; i++)
-                this[id_name] = (matched_found) ? matched[i].replace(/'/g, '') : null;
+            let ret_obj = new Object();
 
-            return matched_found; // appendButton의 조건으로 사용되기도 함.
+            try {
+                for (let i = 0; i < id_name.length; i++)
+                ret_obj[id_name[i]] = (matched_found) ? matched[i].replace(/'/g, '') : null;
+            } catch (err) {
+                ret_obj = null;
+                console.log(matched, err);
+            }
+            return ret_obj;
+        }
+    
+        getIdsByFlag(id_name, id_flag) {
+            let obj = ListWrapper.Elements._getIdsByFlag(this.node, id_name, id_flag);
+
+            for (let key in obj) 
+                this[key] = obj[key];
+
+            return obj != null; // appendButton의 조건으로 사용되기도 함.
         }
 
         appendButton(innerText, attributes) {

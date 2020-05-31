@@ -12,12 +12,11 @@ class LessonForm extends Form {
             console.log('[@LessonForm.viewList] Fetch page.');
 
             elements = ListWrapper.getElements(LessonForm.document);
+            console.log('[@LessonForm.viewList] * Found elements are:', elements);
+
             elements.forEach(elem => {
-                if (!elem.getIdsByFlag(['lessonElementId', 'lessonContentsId'], 'LESN')) return;
-                
                 LessonForm.viewList.updateTable(elem);
             });
-            console.log('[@LessonForm.viewList] * Found elements are:', elements);
         }
 
         static updateTable(elem) {
@@ -28,24 +27,33 @@ class LessonForm extends Form {
             tbody_trs = table.querySelectorAll('tbody tr');
 
             LessonForm.viewList.addTableCell(thead_tr, true);
-            for (let tr in tbody_trs)
+            Array.from(tbody_trs).forEach(tr => {
                 LessonForm.viewList.addTableCell(tr);
+            });
         }
 
-        static addTableCell(tr, isHead=false) {
-            let checkBox = document.createElement('input');
-            checkBox.type = 'checkbox';
 
-            let td;
+        static addTableCell(tr, isHead=false) {
+            let checkBox, td;
+            let obj = ListWrapper.Elements._getIdsByFlag(tr, ['lessonElementId', 'lessonContentsId'], 'LESN');
+
             if (isHead) {
                 td = document.createElement('th');
                 td.innerText = '자동수강';
-            } else {
-                td = document.createElement('td');
             }
-            td.className = 'last';
+            else {
+                td = document.createElement('td');
 
-            td.appendChild(checkBox);
+                if (obj != null) {
+                    checkBox = document.createElement('input');
+                    checkBox.type = 'checkbox';
+
+                    td.innerText += obj.lessonElementId;
+                    td.appendChild(checkBox);
+                }
+            }
+
+            td.className = 'last';
             tr.appendChild(td);
         }
 
