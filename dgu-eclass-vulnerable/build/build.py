@@ -1,6 +1,8 @@
 #-*-encoding:utf-8-*-
 import re
 
+inDevelop = True
+
 # ================================================
 
 def parent_dir_of(path):
@@ -96,7 +98,6 @@ if __name__ == '__main__':
     # --------------------------------
     app_work = None
 
-    inDevelop = True
     if inDevelop:
         app_work = work({
             'name' : 'app',

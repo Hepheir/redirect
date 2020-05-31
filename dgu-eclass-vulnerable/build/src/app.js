@@ -7,7 +7,7 @@ class Main {
             lessonForm : LessonForm,
             referenceForm : undefined,
             reportForm : ReportForm,
-            courseForm : undefined,
+            courseForm : CourseForm,
             etestForm : undefined,
             attendForm : undefined,
             forumForm : undefined,
