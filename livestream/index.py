@@ -62,8 +62,7 @@ while True:
 
     frame_cam_past = frame_cam
 
-    if getCounter() > 10 * 1000:
-    # if getCounter() > 5 * 60 * 1000:
+    if getCounter() > 5 * 60: # Every 5 mins
         restartLive()
         resetCounter()
         print('Restarted')
