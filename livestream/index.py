@@ -57,7 +57,7 @@ while True:
 
     frame_out[padding_bottom:] = (0,0, magic_value)
 
-    cv2.imshow('cam', frame_cam)
+    # cv2.imshow('cam', frame_cam)
     cv2.imshow('out', frame_out)
 
     frame_cam_past = frame_cam
