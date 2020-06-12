@@ -4,7 +4,7 @@ class Main {
         this.document = undefined;
 
         this.formTypes = {
-            lessonForm : LessonForm,
+            lessonForm : undefined,
             referenceForm : undefined,
             reportForm : ReportForm,
             courseForm : CourseForm,
@@ -78,8 +78,9 @@ class Main {
                 console.log(`[@Main] * found '${formName}'.`);
 
                 try {
-                    this.formTypes[formName].fetch_from_main(this.formTypes[formName], form, this);
-                } catch (err) {
+                    this.formTypes[formName].fetch_from_main(this.formTypes[formName], this);
+                }
+                catch (err) {
                     console.log(`[@Main] * '${formName}' page is not supported yet.\n`, err);
                 }
             }

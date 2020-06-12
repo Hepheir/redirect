@@ -2,9 +2,103 @@
 import re
 import os
 
-inDevelop = True
+def main():
+    repository_path = os.path.sep.join(__file__.split(os.path.sep)[:-2])
+    print(f"Selected Repository: '{repository_path}'")
+
+    # --------------------------------
+
+    iter_list = [
+        work({ # DEV
+            'name' : 'app',
+            'save_to' : 'app-dev.js',
+            'scripts' : [
+                'build/src/class/*',
+                'build/src/class/form/*',
+                'build/src/app.js'
+            ],
+            'process' : [collectScripts]
+        }),
+
+        # work({ # RELEASE
+        #     'name' : 'app',
+        #     'save_to' : 'app-release.js',
+        #     'scripts' : [
+        #         'build/src/class/ListWrapper.js',
+        #         'build/src/class/Form.js',
+        #         'build/src/class/form/ReportForm.js',
+        #         'build/src/class/form/LessonForm.js',
+        #         'build/src/app.js'
+        #     ],
+        #     'process' : [collectScripts, removeComments, removeWhiteSpaces]
+        # }),
+        
+        # work({
+        #     'name' : 'linker',
+        #     'save_to' : 'linker-compressed.js',
+        #     'scripts' : ['build/src/linker.js'],
+        #     'process' : [collectScripts, removeComments, removeWhiteSpaces]
+        # }),
+
+        # work({
+        #     'name' : 'readme',
+        #     'save_to' : 'readme.md',
+        #     'scripts' : ['build/src/caller.js'],
+        #     'process' : [collectScripts, removeComments, removeWhiteSpaces, wrapJS, wrapReadme]
+        # })
+    ]
+
+    for name, save_to, script_path_list, process in iter_list:
+        print(f' * Building: {name}')
+        print(f' * Collecting: {str(script_path_list)}')
+
+        script_abspath_list = [os.path.sep.join([repository_path, f]) for f in script_path_list]
+        saveto_abspath = os.path.sep.join([repository_path, save_to])
+        
+        result = script_abspath_list
+
+        print(' * Process:')
+        for func in process:
+            print(f'   * {str(func)}')
+            result = func(result)
+
+        saveScript(saveto_abspath, result)
+        print(f" * Saved at '{saveto_abspath}'", end='\n\n')
+
+    print('Build complete.')
+    print(f' * Total {error_cnt} errors.')
+
+error_cnt = 0
 
 # ================================================
+
+def readScript(file_path):
+    global error_cnt
+    if not isJavascript(file_path):
+        error_cnt += 1
+        print(f" * Error : '{file_path}'' is not a javascript file.")
+        return ''
+    
+    with open(file_path, 'r') as f:
+        return f.read()
+
+    error_cnt += 1
+    print(f' * Error : Unknown error.')
+    return ''
+
+def readScriptAll(dir_path):
+    global error_cnt
+    if not os.path.isdir(dir_path):
+        error_cnt += 1
+        print(f" * Error : '{dir_path}'' is not a directory.")
+        return ''
+    
+    print(f"     * From '{dir_path}'")
+    for file_basename in os.listdir(dir_path):
+        file_path = os.path.join(dir_path, file_basename)
+        if isJavascript(file_path):
+            print(f"       * Collecting '{file_basename}'")
+            yield readScript(file_path)
 
 def saveScript(path, txt):
     f = open(path, 'w')
@@ -15,29 +109,21 @@ def work(_dict): # 그저 가독성 용.
     return [_dict[key] for key in _dict]
 
 def collectScripts(path_list):
-    def _read(path):
-        if not os.path.isfile(path):
-            print(f' * Error : {path} is not file.')
-            return ''
+    retval = "'use-strict';"
+    for path in path_list:
+        retval += '\n'
+        if path.endswith('/*'):
+            dir_path = path[:-1] # remove asterisk
+            retval += '\n'.join(list(readScriptAll(dir_path)))
         else:
-            f = open(path, 'r')
-            code_raw = f.read()
-            f.close()
-            return code_raw
-    def _readAllFromDir(path):
-        dirname = os.path.dirname(path)
-        files = os.listdir(dirname)
-        print(f"     * From '{dirname}'")
-        def _(f):
-            print(f"       * Collecting '{f}'")
-            path = os.path.sep.join([dirname, f])
-            return _read(path) if os.path.isfile(path) else ''
-        return '\n'.join([_(f) for f in files])
-    def _checkAsterisk(path):
-        return _readAllFromDir(path) if path.endswith('/*') else _read(path)
-    return "\n".join([_checkAsterisk(p) for p in path_list])
+            retval += readScript(path)
+    return retval
 
 # ================================================
+
+def isJavascript(path):
+    name, ext = os.path.splitext(path)
+    return os.path.isfile(path) and (ext in ['.js'])
 
 def removeWhiteSpaces(code_raw):
     # 좌우에 공백을 끼는, 제거 가능한 패턴
@@ -101,71 +187,4 @@ def wrapReadme(source):
 
 # ================================================
 
-if __name__ == '__main__':
-    repository_path = os.path.sep.join(__file__.split(os.path.sep)[:-2])
-    print(f"Selected Repository: '{repository_path}'")
-
-    # --------------------------------
-    app_work = None
-
-    if inDevelop:
-        app_work = work({
-            'name' : 'app',
-            'save_to' : 'app-dev.js',
-            'scripts' : [
-                'build/src/class/*',
-                'build/src/app.js'
-            ],
-            'process' : [collectScripts]
-        })
-    else:
-        app_work = work({
-            'name' : 'app',
-            'save_to' : 'app-release.js',
-            'scripts' : [
-                'build/src/class/ListWrapper.js',
-                'build/src/class/Form.js',
-                'build/src/class/ReportForm.js',
-                'build/src/class/LessonForm.js',
-                'build/src/app.js'
-            ],
-            'process' : [collectScripts, removeComments, removeWhiteSpaces]
-        })
-    # --------------------------------
-
-    iter_list = [
-        app_work,
-        
-        work({
-            'name' : 'linker',
-            'save_to' : 'linker-compressed.js',
-            'scripts' : ['build/src/linker.js'],
-            'process' : [collectScripts, removeComments, removeWhiteSpaces]
-        }),
-
-        work({
-            'name' : 'readme',
-            'save_to' : 'readme.md',
-            'scripts' : ['build/src/caller.js'],
-            'process' : [collectScripts, removeComments, removeWhiteSpaces, wrapJS, wrapReadme]
-        })
-    ]
-
-    for name, save_to, script_path_list, process in iter_list:
-        print(f' * Building: {name}')
-        print(f' * Collecting: {str(script_path_list)}')
-
-        script_abspath_list = [os.path.sep.join([repository_path, f]) for f in script_path_list]
-        saveto_abspath = os.path.sep.join([repository_path, save_to])
-        
-        result = script_abspath_list
-
-        print(' * Process:')
-        for func in process:
-            print(f'   * {str(func)}')
-            result = func(result)
-
-        saveScript(saveto_abspath, result)
-        print(f" * Saved at '{saveto_abspath}'", end='\n\n')
-
-    print('Build complete.')
+main()
