@@ -47,7 +47,7 @@ class CourseForm extends Form {
             if (videos.length == 0) return;
 
             // 각 주차 마다 작업
-            title.innerHTML += '<br/>'
+            title.innerHTML += '<br/>';
             // ----------------
             var btn_autoLearn = this._util_DOM_fromString(`
                 <a  class="btn btn-red fcWhite"
@@ -103,7 +103,7 @@ class CourseForm extends Form {
                 alert('Not supported yet');
                 console.log('autolearn');
             }
-        }
+        };
 
         static AsMobile = class {
             constructor(video) {
@@ -193,7 +193,7 @@ class CourseForm extends Form {
                 // Do nothing
                 console.log(` * As mobile`);
             }
-        }
+        };
 
         static Download = class {
             constructor(video) {
@@ -235,7 +235,7 @@ class CourseForm extends Form {
                     that.button.innerText = '다운로드 준비완료';
                 });
             }
-        }
+        };
 
 
         
@@ -315,5 +315,5 @@ class CourseForm extends Form {
         }
 
         */
-    }
-}
+    };
+};

@@ -10,7 +10,7 @@ def main():
 
     iter_list = [
         work({ # DEV
-            'name' : 'app',
+            'name' : 'app-dev',
             'save_to' : 'app-dev.js',
             'scripts' : [
                 'build/src/class/*',
@@ -20,18 +20,16 @@ def main():
             'process' : [collectScripts]
         }),
 
-        # work({ # RELEASE
-        #     'name' : 'app',
-        #     'save_to' : 'app-release.js',
-        #     'scripts' : [
-        #         'build/src/class/ListWrapper.js',
-        #         'build/src/class/Form.js',
-        #         'build/src/class/form/ReportForm.js',
-        #         'build/src/class/form/LessonForm.js',
-        #         'build/src/app.js'
-        #     ],
-        #     'process' : [collectScripts, removeComments, removeWhiteSpaces]
-        # }),
+        work({ # RELEASE
+            'name' : 'app-release',
+            'save_to' : 'app-release.js',
+            'scripts' : [
+                'build/src/class/*',
+                'build/src/class/form/*',
+                'build/src/app.js'
+            ],
+            'process' : [collectScripts, removeComments, removeWhiteSpaces]
+        }),
         
         # work({
         #     'name' : 'linker',
@@ -140,8 +138,11 @@ def removeWhiteSpaces(code_raw):
     return code_raw
 
 def removeComments(code_raw):
-    code_raw = re.sub(r'\/\*.+\*\/', '', code_raw) # 여러 줄 주석 (/* ~ */)
-    code_raw = re.sub(r'[^:]\/\/.*($|\n)', '', code_raw) # 한 줄 주석(// ~). 앞의 [^:]은 url의 유실을 방지.
+    old_code_raw = ''
+    while old_code_raw != code_raw:
+        old_code_raw = code_raw
+        code_raw = re.sub(r'[^((http:)|(https:))]//[^\n]*($|\n)', '\n', code_raw) # 한 줄 주석(// ~). 앞의 [^:]은 url의 유실을 방지.
+    code_raw = re.sub(r'/\*(.*)\*/', '\n', code_raw) # 여러 줄 주석 (/* ~ */)
     return code_raw
 
 def wrapJS(source):
