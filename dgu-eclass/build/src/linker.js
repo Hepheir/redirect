@@ -44,7 +44,7 @@ catch (err) {
             });
         }
     };
-    document.EclassUtils.repository_url = 'https://raw.githubusercontent.com/Hepheir/web_functions/master/dgu-eclass-vulnerable/';
+    document.EclassUtils.repository_url = 'https://raw.githubusercontent.com/Hepheir/web_functions/dgu-eclass/dgu-eclass/';
 }
 finally {
     if (document.EclassUtils.isActive) {
