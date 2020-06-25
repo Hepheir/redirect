@@ -31,12 +31,12 @@ def main():
             'process' : [collectScripts, removeComments, removeWhiteSpaces]
         }),
         
-        # work({
-        #     'name' : 'linker',
-        #     'save_to' : 'linker-compressed.js',
-        #     'scripts' : ['build/src/linker.js'],
-        #     'process' : [collectScripts, removeComments, removeWhiteSpaces]
-        # }),
+        work({
+            'name' : 'linker',
+            'save_to' : 'linker-compressed.js',
+            'scripts' : ['build/src/linker.js'],
+            'process' : [collectScripts, removeComments, removeWhiteSpaces]
+        }),
 
         # work({
         #     'name' : 'readme',
